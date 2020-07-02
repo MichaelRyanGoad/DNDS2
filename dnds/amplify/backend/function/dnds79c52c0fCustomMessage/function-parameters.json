@@ -1,0 +1,24 @@
+{
+    "trigger": true,
+    "modules": [
+        "verification-link"
+    ],
+    "parentResource": "dnds79c52c0f",
+    "functionName": "dnds79c52c0fCustomMessage",
+    "resourceName": "dnds79c52c0fCustomMessage",
+    "parentStack": "auth",
+    "triggerEnvs": [
+        {
+            "key": "RESOURCENAME",
+            "value": "resourceName"
+        }
+    ],
+    "triggerDir": "C:\\Users\\MrG\\AppData\\Roaming\\npm\\node_modules\\@aws-amplify\\cli\\node_modules\\amplify-category-auth\\provider-utils\\awscloudformation\\utils/../triggers/CustomMessage",
+    "triggerTemplate": "CustomMessage.json.ejs",
+    "roleName": "dnds79c52c0fCustomMessage",
+    "skipEdit": true,
+    "REDIRECTURL": "https://www.google.com",
+    "EMAILSUBJECT": "DNDS Account Confirmation",
+    "EMAILMESSAGE": "Thank you for creating a DNDS account. Click the following link in order to verify your account.",
+    "RESOURCENAME": "resourceName"
+}

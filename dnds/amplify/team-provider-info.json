@@ -1,0 +1,27 @@
+{
+    "dndsdevenv": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-dnds-dndsdevenv-122128-authRole",
+            "UnauthRoleArn": "arn:aws:iam::261425339201:role/amplify-dnds-dndsdevenv-122128-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::261425339201:role/amplify-dnds-dndsdevenv-122128-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-dnds-dndsdevenv-122128-deployment",
+            "UnauthRoleName": "amplify-dnds-dndsdevenv-122128-unauthRole",
+            "StackName": "amplify-dnds-dndsdevenv-122128",
+            "StackId": "arn:aws:cloudformation:us-east-2:261425339201:stack/amplify-dnds-dndsdevenv-122128/3bfdd310-bc99-11ea-b188-06d9da1ade34",
+            "AmplifyAppId": "d1trzn3xjk612b"
+        },
+        "categories": {
+            "function": {
+                "dnds79c52c0fCustomMessage": {
+                    "REDIRECTURL": "https://www.google.com",
+                    "EMAILSUBJECT": "DNDS Account Confirmation",
+                    "EMAILMESSAGE": "Thank you for creating a DNDS account. Click the following link in order to verify your account."
+                }
+            },
+            "auth": {
+                "dnds79c52c0f": {}
+            }
+        }
+    }
+}
