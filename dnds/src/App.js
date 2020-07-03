@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Auth, API, graphqlOperation } from "aws-amplify";
+import awsconfig from "./aws-exports";
+import { withAuthenticator } from "aws-amplify-react";
+import "@aws-amplify/ui/dist/style.css";
+import * as queries from "./graphql/queries";
+import * as mutations from "./graphql/mutations";
+import BusyForm from "./components";
+Auth.configure(awsconfig);
+API.configure(awsconfig);
 
 function App() {
+  // API.graphql(graphqlOperation(queries.listUserSchedules)).then((data) => {
+  //   console.log(data);
+  // });
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <BusyForm></BusyForm>
       </header>
     </div>
   );
 }
 
-export default App;
+export default withAuthenticator(App, {
+  includeGreetings: true,
+  signUpConfig: {
+    hiddenDefaults: ["phone_number"],
+    signUpFields: [{ key: "phone_number", required: false }],
+  },
+});

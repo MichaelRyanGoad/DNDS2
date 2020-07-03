@@ -1,0 +1,15 @@
+projects:
+  DNDS API:
+    schemaPath: src/graphql/schema.json
+    includes:
+      - src/graphql/**/*.js
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: javascript
+        generatedFileName: ''
+        docsFilePath: src/graphql
+        region: us-east-2
+        apiId: hbkndt5f2vev7n74ov2eaer464
+        maxDepth: 2
