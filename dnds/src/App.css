@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  border: 1px;
+  border-style: solid;
+  border-color: rgb(255, 51, 0);
 }
 
 .App-logo {
@@ -22,6 +25,9 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  border: 1px;
+  border-style: solid;
+  border-color: rgb(251, 255, 0);
 }
 
 .App-link {
@@ -32,6 +38,28 @@
   border: 1px;
   border-style: solid;
   border-color: black;
+}
+
+.splitscreen {
+  border: 1px;
+  border-style: solid;
+  border-color: blue;
+  display: flex;
+}
+
+.outerMost {
+  border: 1px;
+  border-style: solid;
+  border-color: rgb(0, 255, 98);
+}
+
+.splitscreen .left {
+  flex: 1;
+  padding: 5%;
+}
+.splitscreen .right {
+  flex: 1;
+  padding: 5%;
 }
 
 @keyframes App-logo-spin {

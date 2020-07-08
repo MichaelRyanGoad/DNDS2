@@ -16,6 +16,7 @@ class BusyForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.removeBusyBlock = this.removeBusyBlock.bind(this);
+    this.validateInput = this.validateInput.bind(this);
   }
 
   componentDidMount() {
@@ -36,20 +37,83 @@ class BusyForm extends React.Component {
     });
   }
 
+  validateInput(data) {
+    let isValid = true;
+
+    //getting current date
+    const date = new Date();
+    const yyyy = date.getFullYear();
+    let mm = String(date.getMonth() + 1).padStart(2, "0");
+    let dd = String(date.getDate()).padStart(2, "0");
+    const today = yyyy + "-" + mm + "-" + dd;
+
+    if (!this.state.name) {
+      alert("Please enter a name");
+      isValid = false;
+    }
+    if (!this.state.date) {
+      alert("Please enter a date");
+      isValid = false;
+    }
+    if (!this.state.bstime) {
+      alert("Please enter a busy start time");
+      isValid = false;
+    }
+    if (!this.state.betime) {
+      alert("Please enter a busy end time");
+      isValid = false;
+    }
+    if (this.state.bstime >= this.state.betime) {
+      alert("Please make sure your end time is after your start time");
+      isValid = false;
+    }
+    if (this.state.date < today) {
+      console.log(this.state.date);
+      console.log(today);
+      alert("Dates must not be in the past");
+      isValid = false;
+    }
+    //TEMP TODO
+    for (let i = 0; i < this.state.busyBlocks.length; i++) {
+      let curBlock = this.state.busyBlocks[i];
+      console.log("CUR BLOCK");
+      console.log(curBlock);
+      if (
+        curBlock[1] == this.state.date &&
+        curBlock[2] == this.state.bstime &&
+        curBlock[3] == this.state.betime
+      ) {
+        alert("This time block already exists!");
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
   handleSubmit(event) {
     //prevent default form submit behavior (reloading page, etc...)
     event.preventDefault();
 
+    //temp logs
     console.log("submitted");
     console.log(event);
 
-    //add the form data to the current state
-    this.addBusyBlock([
+    const data = [
       this.state.name,
       this.state.date,
       this.state.bstime,
       this.state.betime,
-    ]);
+    ];
+
+    const isValid = this.validateInput(data);
+    if (isValid) {
+      //add the form data to the current state
+      this.addBusyBlock(data);
+    } else {
+      //NOT FINISHED TODO
+      console.log("FORM WAS NOT VALID");
+    }
   }
 
   //function to condense the busy blocks
@@ -103,51 +167,57 @@ class BusyForm extends React.Component {
     ));
 
     return (
-      <div>
+      <div className="outerMost">
         {" "}
-        <form>
-          <label htmlFor="name">Name:</label>
+        <div className="splitscreen">
+          <div className="left">
+            <form>
+              <label htmlFor="name">Name:</label>
+              <br />
+              <input
+                required="required"
+                type="text"
+                name="name"
+                value={this.state.name}
+                onChange={this.handleChange}
+              />
+              <br />
+              <label htmlFor="date">Date:</label>
+              <br />
+              <input
+                type="date"
+                name="date"
+                value={this.state.date}
+                onChange={this.handleChange}
+              />
+              <br />
+              <label htmlFor="bstime">Busy Start Time (Eastern Time):</label>
+              <br />
+              <input
+                type="time"
+                name="bstime"
+                value={this.state.bstime}
+                onChange={this.handleChange}
+              />
+              <br />
+              <label htmlFor="betime">Busy End Time:</label>
+              <br />
+              <input
+                type="time"
+                name="betime"
+                value={this.state.betime}
+                onChange={this.handleChange}
+              />
+              <br />
+              <br />
+              <input type="submit" value="Submit" onClick={this.handleSubmit} />
+            </form>
+          </div>
           <br />
-          <input
-            required="required"
-            type="text"
-            name="name"
-            value={this.state.name}
-            onChange={this.handleChange}
-          />
-          <br />
-          <label htmlFor="date">Date:</label>
-          <br />
-          <input
-            type="date"
-            name="date"
-            value={this.state.date}
-            onChange={this.handleChange}
-          />
-          <br />
-          <label htmlFor="bstime">Busy Start Time (Eastern Time):</label>
-          <br />
-          <input
-            type="time"
-            name="bstime"
-            value={this.state.bstime}
-            onChange={this.handleChange}
-          />
-          <br />
-          <label htmlFor="betime">Busy End Time:</label>
-          <br />
-          <input
-            type="time"
-            name="betime"
-            value={this.state.betime}
-            onChange={this.handleChange}
-          />
-          <br />
-          <br />
-          <input type="submit" value="Submit" onClick={this.handleSubmit} />
-        </form>
-        <br />
-        <ul>{busyBlockCards}</ul>
+          <div className="right">
+            <ul>{busyBlockCards}</ul>
+          </div>
+        </div>
       </div>
     );
   }
