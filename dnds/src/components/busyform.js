@@ -15,6 +15,7 @@ class BusyForm extends React.Component {
     this.addBusyBlock = this.addBusyBlock.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.removeBusyBlock = this.removeBusyBlock.bind(this);
   }
 
   componentDidMount() {
@@ -36,24 +37,68 @@ class BusyForm extends React.Component {
   }
 
   handleSubmit(event) {
+    //prevent default form submit behavior (reloading page, etc...)
     event.preventDefault();
-    this.addBusyBlock([0, 100]);
+
+    console.log("submitted");
+    console.log(event);
+
+    //add the form data to the current state
+    this.addBusyBlock([
+      this.state.name,
+      this.state.date,
+      this.state.bstime,
+      this.state.betime,
+    ]);
   }
 
+  //function to condense the busy blocks
+  condenseBusyBlocks() {}
+
   addBusyBlock(bblock) {
+    console.log("gonna add dis");
+
+    //get clone of current block array
     let curBusyBlocks = [...this.state.busyBlocks];
+
+    //temp log to see clone of busy blocks
     console.log(curBusyBlocks);
+
+    //add block to clone array
     curBusyBlocks.push(bblock);
+
+    //update state with updated clone array
     this.setState({
       busyBlocks: curBusyBlocks,
     });
   }
 
+  removeBusyBlock(data, idx) {
+    //temp logs
+    console.log("gonna remove dis");
+    console.log(data);
+    console.log(idx);
+
+    //get clone of data
+    let curBusyBlocks = [...this.state.busyBlocks];
+
+    //remove the data
+    curBusyBlocks.splice(idx, 1);
+
+    //update current state
+    this.setState({ busyBlocks: curBusyBlocks });
+  }
+
   render() {
-    const busyBlockCards = this.state.busyBlocks.map((start, stop) => (
-      <div className="Card" key={stop}>
-        <li key={stop + "start"}>{start[0]}</li>
-        <li key={stop + "stop"}>{start[1]}</li>
+    const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
+      <div className="Card" key={idx}>
+        <li key={idx + "name"}>{data[0]}</li>
+        <li key={idx + "date"}>{data[1]}</li>
+        <li key={idx + "start"}>{data[2]}</li>
+        <li key={idx + "stop"}>{data[3]}</li>
+        <button onClick={(event) => this.removeBusyBlock(data, idx)}>
+          remove
+        </button>
       </div>
     ));
 
@@ -64,6 +109,7 @@ class BusyForm extends React.Component {
           <label htmlFor="name">Name:</label>
           <br />
           <input
+            required="required"
             type="text"
             name="name"
             value={this.state.name}
