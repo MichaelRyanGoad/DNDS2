@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+import logo from "./logo.png";
 import "./App.css";
 import { Auth, API, graphqlOperation } from "aws-amplify";
 import awsconfig from "./aws-exports";
@@ -20,8 +20,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <BusyForm></BusyForm>
       </header>
+      <body className="App-body">
+        <BusyForm></BusyForm>
+      </body>
     </div>
   );
 }

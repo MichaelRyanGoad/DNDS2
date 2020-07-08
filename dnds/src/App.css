@@ -13,12 +13,16 @@
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
+    max-width: 50vw;
+    max-height: 50vh;
+    padding-top: 100px;
+    padding-bottom: 100px;
   }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: rgb(25, 84, 139);
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,6 +32,11 @@
   border: 1px;
   border-style: solid;
   border-color: rgb(251, 255, 0);
+}
+
+.App-body {
+  background-color: #647597;
+  font-size: calc(10px + 1vmin);
 }
 
 .App-link {
@@ -63,10 +72,22 @@
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  0% {
+    transform: translate(0px) rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  25% {
+    transform: translateX(-25vw) rotate(90deg);
+    filter: invert(50%) blur(3px);
+  }
+  50% {
+    transform: translate(0px) rotate(180deg);
+    filter: invert(100%) blur(6px);
+  }
+  75% {
+    transform: translate(25vw) rotate(270deg);
+    filter: invert(50%) blur(3px);
+  }
+  100% {
+    transform: translate(0px) rotate(360deg);
   }
 }
