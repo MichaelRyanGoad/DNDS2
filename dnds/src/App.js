@@ -21,9 +21,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <body className="App-body">
+      <div className="App-body">
         <BusyForm></BusyForm>
-      </body>
+      </div>
     </div>
   );
 }

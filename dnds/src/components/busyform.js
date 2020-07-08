@@ -17,6 +17,7 @@ class BusyForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.removeBusyBlock = this.removeBusyBlock.bind(this);
     this.validateInput = this.validateInput.bind(this);
+    this.condenseBusyBlocks = this.condenseBusyBlocks.bind(this);
   }
 
   componentDidMount() {
@@ -79,9 +80,9 @@ class BusyForm extends React.Component {
       console.log("CUR BLOCK");
       console.log(curBlock);
       if (
-        curBlock[1] == this.state.date &&
-        curBlock[2] == this.state.bstime &&
-        curBlock[3] == this.state.betime
+        curBlock[1] === this.state.date &&
+        curBlock[2] === this.state.bstime &&
+        curBlock[3] === this.state.betime
       ) {
         alert("This time block already exists!");
         isValid = false;
@@ -116,8 +117,62 @@ class BusyForm extends React.Component {
     }
   }
 
+  //BROKEN CURRENTLY TODO
   //function to condense the busy blocks
-  condenseBusyBlocks() {}
+  condenseBusyBlocks() {
+    //get clone of busy blocks
+    let cloneBlocks = [...this.state.busyBlocks];
+
+    console.log("CLONE");
+    console.log(cloneBlocks);
+
+    //create condensed array, add first item of busyBlocks clone
+    let condensedBlocks = [[...cloneBlocks[0]]];
+    condensedBlocks[0].splice(0, 1);
+
+    console.log("CONDENSED BLOCKS");
+    console.log(condensedBlocks);
+
+    //loop through busy blocks
+    for (let i = 1; i < cloneBlocks.length; i++) {
+      //get previous blocks
+      let currentBlock = cloneBlocks[i];
+      let previousBlock = condensedBlocks[condensedBlocks.length - 1];
+      //destructure into variables
+      let [currentName, currentDay, currentStart, currentEnd] = currentBlock;
+      let [previousDay, previousStart, previousEnd] = previousBlock;
+
+      if (previousDay === currentDay) {
+        if (previousEnd >= currentStart) {
+          console.log("MERGE REACHED");
+          console.log(currentEnd);
+          console.log(previousEnd);
+          console.log(Math.max(currentEnd, previousEnd));
+          //create new merged previous block
+          let newPreviousBlock = [
+            currentDay,
+            previousStart,
+            currentEnd >= previousEnd ? currentEnd : previousEnd,
+          ];
+          //replace old previous block
+          console.log("Ending overlap - merge happening");
+          console.log(currentName);
+          condensedBlocks[condensedBlocks.length - 1] = newPreviousBlock;
+        } else {
+          console.log("Ending - same day, no overlap");
+          console.log(currentName);
+          condensedBlocks.push([currentDay, currentStart, currentEnd]);
+        }
+      } else {
+        console.log("Ending - Different day");
+        console.log(currentName);
+        condensedBlocks.push([currentDay, currentStart, currentEnd]);
+      }
+    }
+
+    //temp log
+    console.log(condensedBlocks);
+  }
 
   addBusyBlock(bblock) {
     console.log("gonna add dis");
@@ -211,6 +266,11 @@ class BusyForm extends React.Component {
               <br />
               <br />
               <input type="submit" value="Submit" onClick={this.handleSubmit} />
+              <input
+                type="button"
+                value="Condense"
+                onClick={this.condenseBusyBlocks}
+              />
             </form>
           </div>
           <br />
