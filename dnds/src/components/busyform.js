@@ -18,6 +18,26 @@ class BusyForm extends React.Component {
     this.removeBusyBlock = this.removeBusyBlock.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.condenseBusyBlocks = this.condenseBusyBlocks.bind(this);
+    this.sortBusyBlocks = this.sortBusyBlocks.bind(this);
+  }
+
+  sortBusyBlocks() {
+    //clone busyBlocks
+    let clone = [...this.state.busyBlocks];
+
+    clone.sort(function (x, y) {
+      if (x[1] != y[1]) {
+        return x[1] < y[1] ? -1 : 1;
+      }
+      return x[2] < y[2] ? -1 : 1;
+    });
+
+    console.log(clone);
+
+    //set new state
+    this.setState({
+      busyBlocks: clone,
+    });
   }
 
   componentDidMount() {
@@ -271,6 +291,7 @@ class BusyForm extends React.Component {
                 value="Condense"
                 onClick={this.condenseBusyBlocks}
               />
+              <input type="button" value="Sort" onClick={this.sortBusyBlocks} />
             </form>
           </div>
           <br />
