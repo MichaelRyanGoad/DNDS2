@@ -1,5 +1,6 @@
 import React from "react";
 import "../App.css";
+import { Auth } from "aws-amplify";
 
 class BusyForm extends React.Component {
   constructor(props) {
@@ -14,25 +15,33 @@ class BusyForm extends React.Component {
     //binds go here
     this.addBusyBlock = this.addBusyBlock.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleAdd = this.handleAdd.bind(this);
     this.removeBusyBlock = this.removeBusyBlock.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.condenseBusyBlocks = this.condenseBusyBlocks.bind(this);
     this.sortBusyBlocks = this.sortBusyBlocks.bind(this);
+    this.getUser = this.getUser.bind(this);
+  }
+
+  getUser() {
+    Auth.currentAuthenticatedUser().then((data) => {
+      return data.username;
+    });
   }
 
   sortBusyBlocks() {
+    console.log("SORT BUSY BLOCKS FIRED");
+
     //clone busyBlocks
     let clone = [...this.state.busyBlocks];
 
+    //sort function
     clone.sort(function (x, y) {
-      if (x[1] != y[1]) {
+      if (x[1] !== y[1]) {
         return x[1] < y[1] ? -1 : 1;
       }
       return x[2] < y[2] ? -1 : 1;
     });
-
-    console.log(clone);
 
     //set new state
     this.setState({
@@ -112,12 +121,12 @@ class BusyForm extends React.Component {
     return isValid;
   }
 
-  handleSubmit(event) {
+  handleAdd(event) {
     //prevent default form submit behavior (reloading page, etc...)
     event.preventDefault();
 
     //temp logs
-    console.log("submitted");
+    console.log("HANDLE ADD FIRED");
     console.log(event);
 
     const data = [
@@ -207,9 +216,14 @@ class BusyForm extends React.Component {
     curBusyBlocks.push(bblock);
 
     //update state with updated clone array
-    this.setState({
-      busyBlocks: curBusyBlocks,
-    });
+    this.setState(
+      {
+        busyBlocks: curBusyBlocks,
+      },
+      () => {
+        this.sortBusyBlocks();
+      }
+    );
   }
 
   removeBusyBlock(data, idx) {
@@ -285,13 +299,13 @@ class BusyForm extends React.Component {
               />
               <br />
               <br />
-              <input type="submit" value="Submit" onClick={this.handleSubmit} />
+              <input type="button" value="Add" onClick={this.handleAdd} />
               <input
                 type="button"
                 value="Condense"
                 onClick={this.condenseBusyBlocks}
               />
-              <input type="button" value="Sort" onClick={this.sortBusyBlocks} />
+              <input type="button" value="Get User" onClick={this.getUser} />
             </form>
           </div>
           <br />
