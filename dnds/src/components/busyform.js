@@ -20,12 +20,23 @@ class BusyForm extends React.Component {
     this.validateInput = this.validateInput.bind(this);
     this.condenseBusyBlocks = this.condenseBusyBlocks.bind(this);
     this.sortBusyBlocks = this.sortBusyBlocks.bind(this);
-    this.getUser = this.getUser.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  getUser() {
+  //unfinished todo
+  handleSubmit() {
+    //Get username from Auth
     Auth.currentAuthenticatedUser().then((data) => {
-      return data.username;
+      //set up return object
+      let retObj = {
+        name: data.username,
+        schedule: this.condenseBusyBlocks(),
+      };
+
+      //temp log
+      console.log(retObj);
+
+      //todo send retObj to database
     });
   }
 
@@ -146,7 +157,6 @@ class BusyForm extends React.Component {
     }
   }
 
-  //BROKEN CURRENTLY TODO
   //function to condense the busy blocks
   condenseBusyBlocks() {
     //get clone of busy blocks
@@ -201,6 +211,9 @@ class BusyForm extends React.Component {
 
     //temp log
     console.log(condensedBlocks);
+
+    //return result
+    return condensedBlocks;
   }
 
   addBusyBlock(bblock) {
@@ -300,12 +313,7 @@ class BusyForm extends React.Component {
               <br />
               <br />
               <input type="button" value="Add" onClick={this.handleAdd} />
-              <input
-                type="button"
-                value="Condense"
-                onClick={this.condenseBusyBlocks}
-              />
-              <input type="button" value="Get User" onClick={this.getUser} />
+              <input type="button" value="Submit" onClick={this.handleSubmit} />
             </form>
           </div>
           <br />
