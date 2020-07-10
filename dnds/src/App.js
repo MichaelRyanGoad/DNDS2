@@ -5,8 +5,6 @@ import { Auth, API, graphqlOperation } from "aws-amplify";
 import awsconfig from "./aws-exports";
 import { withAuthenticator } from "aws-amplify-react";
 import "@aws-amplify/ui/dist/style.css";
-import * as queries from "./graphql/queries";
-import * as mutations from "./graphql/mutations";
 import BusyForm from "./components";
 Auth.configure(awsconfig);
 API.configure(awsconfig);

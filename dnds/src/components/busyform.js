@@ -1,6 +1,9 @@
 import React from "react";
 import "../App.css";
-import { Auth } from "aws-amplify";
+import { Auth, API, graphqlOperation } from "aws-amplify";
+import * as mutations from "../graphql/mutations";
+import awsconfig from "../aws-exports";
+API.configure(awsconfig);
 
 class BusyForm extends React.Component {
   constructor(props) {
@@ -29,14 +32,37 @@ class BusyForm extends React.Component {
     Auth.currentAuthenticatedUser().then((data) => {
       //set up return object
       let retObj = {
-        name: data.username,
+        username: data.username,
         schedule: this.condenseBusyBlocks(),
       };
 
       //temp log
       console.log(retObj);
 
+      console.log("Attempting to send object to database");
+
       //todo send retObj to database
+      API.graphql(
+        graphqlOperation(mutations.createUserSchedule, { input: retObj })
+      )
+        .then((data) => {
+          console.log(data);
+          console.log("DATA CREATED ABOVE!");
+        })
+        .catch((e) => {
+          API.graphql(
+            graphqlOperation(mutations.updateUserSchedule, { input: retObj })
+          )
+            .then((data) => {
+              console.log(data);
+              console.log("DATA UPDATED ABOVE!");
+            })
+            .catch((err) => {
+              console.log("ERROR");
+              console.log(e);
+              console.log(err);
+            });
+        });
     });
   }
 
