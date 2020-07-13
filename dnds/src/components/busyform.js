@@ -14,6 +14,7 @@ class BusyForm extends React.Component {
       date: "",
       bstime: "",
       betime: "",
+      eMsg: [],
     };
     //binds go here
     this.addBusyBlock = this.addBusyBlock.bind(this);
@@ -26,7 +27,7 @@ class BusyForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  //unfinished todo
+  //submit handler
   handleSubmit() {
     //Get username from Auth
     Auth.currentAuthenticatedUser().then((data) => {
@@ -36,29 +37,32 @@ class BusyForm extends React.Component {
         schedule: this.condenseBusyBlocks(),
       };
 
-      //temp log
-      console.log(retObj);
-
       console.log("Attempting to send object to database");
 
-      //todo send retObj to database
+      //first attempt to add retObj to the database
       API.graphql(
         graphqlOperation(mutations.createUserSchedule, { input: retObj })
       )
         .then((data) => {
+          alert("Your schedule has been successfully created.");
+          console.log("DATA CREATED:");
           console.log(data);
-          console.log("DATA CREATED ABOVE!");
         })
         .catch((e) => {
+          //if there is an error, attempt to update instead of add
           API.graphql(
             graphqlOperation(mutations.updateUserSchedule, { input: retObj })
           )
             .then((data) => {
+              alert("Your schedule has been successfully updated.");
+              console.log("DATA UPDATED:");
               console.log(data);
-              console.log("DATA UPDATED ABOVE!");
             })
             .catch((err) => {
-              console.log("ERROR");
+              alert(
+                "Error while trying to create or update a schedule. Press f12 to see console for more details."
+              );
+              console.log("ERROR - Two errors occured: ");
               console.log(e);
               console.log(err);
             });
@@ -66,9 +70,8 @@ class BusyForm extends React.Component {
     });
   }
 
+  //sorts busy blocks
   sortBusyBlocks() {
-    console.log("SORT BUSY BLOCKS FIRED");
-
     //clone busyBlocks
     let clone = [...this.state.busyBlocks];
 
@@ -86,16 +89,7 @@ class BusyForm extends React.Component {
     });
   }
 
-  componentDidMount() {
-    console.log("mounted");
-    console.log(this.state);
-  }
-
-  componentDidUpdate() {
-    console.log("updated");
-    console.log(this.state);
-  }
-
+  //updates state on change events
   handleChange(event) {
     const value = event.target.value;
     this.setState({
@@ -104,8 +98,12 @@ class BusyForm extends React.Component {
     });
   }
 
+  //input validator
   validateInput(data) {
+    //set bool for return
     let isValid = true;
+
+    let errMsg = [];
 
     //getting current date
     const date = new Date();
@@ -114,57 +112,58 @@ class BusyForm extends React.Component {
     let dd = String(date.getDate()).padStart(2, "0");
     const today = yyyy + "-" + mm + "-" + dd;
 
-    if (!this.state.name) {
-      alert("Please enter a name");
+    //todo turn this into message elements instead of alerts.
+    //custom validation checks.
+
+    //Check for empty values
+    if (
+      !this.state.name ||
+      !this.state.date ||
+      !this.state.bstime ||
+      !this.state.betime
+    ) {
+      errMsg.push("Please fill in all fields.");
       isValid = false;
     }
-    if (!this.state.date) {
-      alert("Please enter a date");
-      isValid = false;
-    }
-    if (!this.state.bstime) {
-      alert("Please enter a busy start time");
-      isValid = false;
-    }
-    if (!this.state.betime) {
-      alert("Please enter a busy end time");
-      isValid = false;
-    }
+
+    //Check that end time is after start time
     if (this.state.bstime >= this.state.betime) {
-      alert("Please make sure your end time is after your start time");
+      errMsg.push("Please make sure your end time is after your start time");
       isValid = false;
     }
+
+    //Check that day is not in the past.
     if (this.state.date < today) {
-      console.log(this.state.date);
-      console.log(today);
-      alert("Dates must not be in the past");
+      errMsg.push("Dates must not be in the past");
       isValid = false;
     }
-    //TEMP TODO
+
+    //Check for duplicate entry
     for (let i = 0; i < this.state.busyBlocks.length; i++) {
       let curBlock = this.state.busyBlocks[i];
-      console.log("CUR BLOCK");
-      console.log(curBlock);
       if (
         curBlock[1] === this.state.date &&
         curBlock[2] === this.state.bstime &&
         curBlock[3] === this.state.betime
       ) {
-        alert("This time block already exists!");
+        errMsg.push("This time block already exists!");
         isValid = false;
       }
     }
 
+    //update error message in state
+    this.setState({
+      ...this.state,
+      eMsg: errMsg,
+    });
+
     return isValid;
   }
 
+  //event handler for adding busy block to state
   handleAdd(event) {
     //prevent default form submit behavior (reloading page, etc...)
     event.preventDefault();
-
-    //temp logs
-    console.log("HANDLE ADD FIRED");
-    console.log(event);
 
     const data = [
       this.state.name,
@@ -173,13 +172,14 @@ class BusyForm extends React.Component {
       this.state.betime,
     ];
 
+    //Validate the input before adding to state
     const isValid = this.validateInput(data);
     if (isValid) {
       //add the form data to the current state
       this.addBusyBlock(data);
     } else {
-      //NOT FINISHED TODO
-      console.log("FORM WAS NOT VALID");
+      //NOT FINISHED TODO make actual alerts
+      alert("The form was not valid. Please resubmit after fixing the errors.");
     }
   }
 
@@ -188,15 +188,9 @@ class BusyForm extends React.Component {
     //get clone of busy blocks
     let cloneBlocks = [...this.state.busyBlocks];
 
-    console.log("CLONE");
-    console.log(cloneBlocks);
-
     //create condensed array, add first item of busyBlocks clone
     let condensedBlocks = [[...cloneBlocks[0]]];
     condensedBlocks[0].splice(0, 1);
-
-    console.log("CONDENSED BLOCKS");
-    console.log(condensedBlocks);
 
     //loop through busy blocks
     for (let i = 1; i < cloneBlocks.length; i++) {
@@ -204,52 +198,39 @@ class BusyForm extends React.Component {
       let currentBlock = cloneBlocks[i];
       let previousBlock = condensedBlocks[condensedBlocks.length - 1];
       //destructure into variables
-      let [currentName, currentDay, currentStart, currentEnd] = currentBlock;
+      let [, currentDay, currentStart, currentEnd] = currentBlock;
       let [previousDay, previousStart, previousEnd] = previousBlock;
 
+      //if the current day is the same as previous, check for overlap
       if (previousDay === currentDay) {
         if (previousEnd >= currentStart) {
-          console.log("MERGE REACHED");
-          console.log(currentEnd);
-          console.log(previousEnd);
-          console.log(Math.max(currentEnd, previousEnd));
           //create new merged previous block
           let newPreviousBlock = [
             currentDay,
             previousStart,
             currentEnd >= previousEnd ? currentEnd : previousEnd,
           ];
-          //replace old previous block
-          console.log("Ending overlap - merge happening");
-          console.log(currentName);
+
+          //replace old previous block with the new merged block
           condensedBlocks[condensedBlocks.length - 1] = newPreviousBlock;
         } else {
-          console.log("Ending - same day, no overlap");
-          console.log(currentName);
+          //same day, no overlap. Add to array.
           condensedBlocks.push([currentDay, currentStart, currentEnd]);
         }
       } else {
-        console.log("Ending - Different day");
-        console.log(currentName);
+        //New day, no overlap possible. Add to array.
         condensedBlocks.push([currentDay, currentStart, currentEnd]);
       }
     }
-
-    //temp log
-    console.log(condensedBlocks);
 
     //return result
     return condensedBlocks;
   }
 
+  //function to add busy block to current state
   addBusyBlock(bblock) {
-    console.log("gonna add dis");
-
     //get clone of current block array
     let curBusyBlocks = [...this.state.busyBlocks];
-
-    //temp log to see clone of busy blocks
-    console.log(curBusyBlocks);
 
     //add block to clone array
     curBusyBlocks.push(bblock);
@@ -265,12 +246,8 @@ class BusyForm extends React.Component {
     );
   }
 
+  //function to remove busy block from state
   removeBusyBlock(data, idx) {
-    //temp logs
-    console.log("gonna remove dis");
-    console.log(data);
-    console.log(idx);
-
     //get clone of data
     let curBusyBlocks = [...this.state.busyBlocks];
 
@@ -281,6 +258,7 @@ class BusyForm extends React.Component {
     this.setState({ busyBlocks: curBusyBlocks });
   }
 
+  //function for rendering component
   render() {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
       <div className="Card" key={idx}>
@@ -292,6 +270,12 @@ class BusyForm extends React.Component {
           remove
         </button>
       </div>
+    ));
+
+    const errorMessages = this.state.eMsg.map((data, idx) => (
+      <p key={"eMsg" + idx} className="ErrorMessage">
+        {data}
+      </p>
     ));
 
     return (
@@ -337,7 +321,7 @@ class BusyForm extends React.Component {
                 onChange={this.handleChange}
               />
               <br />
-              <br />
+              <div>{errorMessages}</div>
               <input type="button" value="Add" onClick={this.handleAdd} />
               <input type="button" value="Submit" onClick={this.handleSubmit} />
             </form>
@@ -350,6 +334,18 @@ class BusyForm extends React.Component {
       </div>
     );
   }
+
+  // USED FOR TESTING
+
+  // componentDidMount() {
+  //   console.log("mounted");
+  //   console.log(this.state);
+  // }
+
+  // componentDidUpdate() {
+  //   console.log("updated");
+  //   console.log(this.state);
+  // }
 }
 
 export default BusyForm;

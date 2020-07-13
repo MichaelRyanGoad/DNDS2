@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.png";
 import "./App.css";
-import { Auth, API, graphqlOperation } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import awsconfig from "./aws-exports";
 import { withAuthenticator } from "aws-amplify-react";
 import "@aws-amplify/ui/dist/style.css";
@@ -10,10 +10,6 @@ Auth.configure(awsconfig);
 API.configure(awsconfig);
 
 function App() {
-  // API.graphql(graphqlOperation(queries.listUserSchedules)).then((data) => {
-  //   console.log(data);
-  // });
-
   return (
     <div className="App">
       <header className="App-header">
