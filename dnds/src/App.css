@@ -1,8 +1,8 @@
 .App {
   text-align: center;
-  border: 1px;
+  /* border: 1px;
   border-style: solid;
-  border-color: rgb(255, 51, 0);
+  border-color: rgb(255, 51, 0); */
 }
 
 .App-logo {
@@ -30,9 +30,9 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  border: 1px;
+  /* border: 1px;
   border-style: solid;
-  border-color: rgb(251, 255, 0);
+  border-color: rgb(251, 255, 0); */
 }
 
 .App-body {
@@ -57,17 +57,18 @@
 }
 
 .splitscreen {
-  border: 1px;
+  /* border: 1px;
   border-style: solid;
-  border-color: blue;
+  border-color: blue; */
   display: flex;
 }
 
-.outerMost {
+/* .outerMost {
   border: 1px;
   border-style: solid;
   border-color: rgb(0, 255, 98);
-}
+  height: max-content;
+} */
 
 .splitscreen .left {
   flex: 1;

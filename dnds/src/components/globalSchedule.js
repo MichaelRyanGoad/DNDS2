@@ -8,8 +8,14 @@ class GlobalSchedule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gsched: "",
+      bschedule: [],
+      fschedule: [],
     };
+    this.generateFreeSchedule = this.generateFreeSchedule.bind(this);
+  }
+
+  componentDidUpdate() {
+    console.log(this.state);
   }
 
   componentDidMount() {
@@ -20,13 +26,153 @@ class GlobalSchedule extends React.Component {
       if (err) {
         console.log(err);
       }
-      this.setState({ gsched: data.data.getUserSchedule.schedule });
+      this.setState({ bschedule: data.data.getUserSchedule.schedule });
+      this.generateFreeSchedule();
     });
+  }
+
+  generateFreeSchedule(sessionLength = 60) {
+    //schedule of free blocks
+    let fsched = [];
+
+    //set iterating variables
+    let block1 = [];
+    let block2 = [];
+
+    //todo does not currently take care of cases where bschedule has < 2 elements.
+
+    for (let x = 1; x < this.state.bschedule.length; x++) {
+      //get blocks
+      block1 = this.state.bschedule[x - 1];
+      block2 = this.state.bschedule[x];
+
+      //format date objects from blocks
+      let d1 = new Date(block1[0] + " " + block1[2]);
+      let d2 = new Date(block2[0] + " " + block2[1]);
+
+      //if block between dates is >= minimum session length, add it to the list of free blocks.
+      if (this.getDifferenceInMinutes(d1, d2) >= sessionLength) {
+        fsched.push([
+          [block1[0], block1[2]],
+          [block2[0], block2[1]],
+        ]);
+      }
+    }
+
+    //padding start and end of week
+
+    //getting current date
+    const date = new Date();
+    let yyyy = date.getFullYear();
+    let mm = String(date.getMonth() + 1).padStart(2, "0");
+    let dd = String(date.getDate()).padStart(2, "0");
+    let today = yyyy + "-" + mm + "-" + dd;
+
+    //get date and times variables for start padding
+    let startTime =
+      (date.getHours() + "").padStart(2, "0") +
+      ":" +
+      (date.getMinutes() + "").padStart(2, "0");
+    let endDate = this.state.bschedule[0][0];
+    let endTime = this.state.bschedule[0][1];
+    let d2 = new Date(endDate + " " + endTime);
+
+    console.log(d2);
+
+    //check if starting pad meets session length and add to fsched if so
+    if (this.getDifferenceInMinutes(date, d2) >= sessionLength) {
+      const startPadding = [
+        [today, startTime],
+        [endDate, endTime],
+      ];
+      fsched.splice(0, 0, startPadding);
+    }
+
+    //todo pad end
+
+    //get date 1 week from now
+    let nextWeek = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
+    //set cap to end of day 1 week from now
+    nextWeek.setHours(23, 59, 59);
+    yyyy = nextWeek.getFullYear();
+    mm = String(nextWeek.getMonth() + 1).padStart(2, "0");
+    dd = String(nextWeek.getDate()).padStart(2, "0");
+    endDate = yyyy + "-" + mm + "-" + dd;
+
+    //get date and times variables for end padding
+    startTime = this.state.bschedule[this.state.bschedule.length - 1][2];
+    let startDate = this.state.bschedule[this.state.bschedule.length - 1][0];
+
+    endTime =
+      (nextWeek.getHours() + "").padStart(2, "0") +
+      ":" +
+      (nextWeek.getMinutes() + "").padStart(2, "0");
+    d2 = new Date(startDate + " " + startTime);
+
+    //check if starting pad meets session length and add to fsched if so
+    if (this.getDifferenceInMinutes(nextWeek, d2) >= sessionLength) {
+      const endPadding = [
+        [startDate, startTime],
+        [endDate, endTime],
+      ];
+      fsched.push(endPadding);
+    }
+
+    //update state
+    this.setState({
+      ...this.state,
+      fschedule: fsched,
+    });
+
+    //temp logs
+    console.log("TESTER2");
+    console.log(fsched);
+  }
+
+  //format to get the number of minutes between two date objects
+  getDifferenceInMinutes(date1, date2) {
+    const diffInMs = Math.abs(date2 - date1);
+    return diffInMs / (1000 * 60);
   }
 
   render() {
     //
-    return <div>{this.state.gsched}</div>;
+
+    let scheduleCards = this.state.bschedule.map((data, idx) => (
+      <div key={idx + "div"} className="Card">
+        <p key={idx + "date"}>{data[0]}</p>
+        <li key={idx + "start"}>{data[1]}</li>
+        <li key={idx + "end"}>{data[2]}</li>
+      </div>
+    ));
+
+    let fScheduleCards = this.state.fschedule.map((data, idx) => (
+      <div key={idx + "div"} className="Card">
+        <div className="splitscreen">
+          <div className="left">
+            <p key={idx + "startDate"}>{data[0][0]}</p>
+            <li key={idx + "startTime"}>{data[0][1]}</li>
+          </div>
+          <div className="right">
+            <p key={idx + "endDate"}>{data[1][0]}</p>
+            <li key={idx + "endTime"}>{data[1][1]}</li>
+          </div>
+        </div>
+      </div>
+    ));
+
+    return (
+      <div className="splitscreen">
+        <div className="left">
+          <p>Busy Blocks</p>
+          {scheduleCards}
+        </div>
+        <div className="right">
+          <p>Free Blocks</p>
+          {fScheduleCards}
+        </div>
+      </div>
+    );
   }
 }
 export default GlobalSchedule;
