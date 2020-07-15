@@ -2,6 +2,7 @@ import React from "react";
 import "../App.css";
 import { Auth, API, graphqlOperation } from "aws-amplify";
 import * as mutations from "../graphql/mutations";
+import * as queries from "../graphql/queries";
 import awsconfig from "../aws-exports";
 API.configure(awsconfig);
 
@@ -15,6 +16,7 @@ class BusyForm extends React.Component {
       bstime: "",
       betime: "",
       eMsg: [],
+      currentUser: "",
     };
     //binds go here
     this.addBusyBlock = this.addBusyBlock.bind(this);
@@ -27,47 +29,79 @@ class BusyForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidUpdate() {
+    console.log("updated");
+    console.log(this.state);
+  }
+
+  componentDidMount() {
+    //Get username from Auth
+    Auth.currentAuthenticatedUser().then((data) => {
+      this.setState({
+        ...this.state,
+        currentUser: data.username,
+      });
+
+      API.graphql(
+        graphqlOperation(queries.getUserSchedule, { username: data.username })
+      ).then((data, err) => {
+        if (err) {
+          console.log("ERROR");
+          console.log(err);
+        } else {
+          let modSched = data.data.getUserSchedule.schedule;
+          modSched.forEach((data, idx) => {
+            data.splice(0, 0, "Block " + idx);
+          });
+          this.setState({
+            ...this.state,
+            busyBlocks: modSched,
+          });
+        }
+      });
+    });
+  }
+
   //submit handler
   handleSubmit() {
     //Get username from Auth
-    Auth.currentAuthenticatedUser().then((data) => {
-      //set up return object
-      let retObj = {
-        username: data.username,
-        schedule: this.condenseBusyBlocks(),
-      };
 
-      console.log("Attempting to send object to database");
+    //set up return object
+    let retObj = {
+      username: this.state.currentUser,
+      schedule: this.condenseBusyBlocks(),
+    };
 
-      //first attempt to add retObj to the database
-      API.graphql(
-        graphqlOperation(mutations.createUserSchedule, { input: retObj })
-      )
-        .then((data) => {
-          alert("Your schedule has been successfully created.");
-          console.log("DATA CREATED:");
-          console.log(data);
-        })
-        .catch((e) => {
-          //if there is an error, attempt to update instead of add
-          API.graphql(
-            graphqlOperation(mutations.updateUserSchedule, { input: retObj })
-          )
-            .then((data) => {
-              alert("Your schedule has been successfully updated.");
-              console.log("DATA UPDATED:");
-              console.log(data);
-            })
-            .catch((err) => {
-              alert(
-                "Error while trying to create or update a schedule. Press f12 to see console for more details."
-              );
-              console.log("ERROR - Two errors occured: ");
-              console.log(e);
-              console.log(err);
-            });
-        });
-    });
+    console.log("Attempting to send object to database");
+
+    //first attempt to add retObj to the database
+    API.graphql(
+      graphqlOperation(mutations.createUserSchedule, { input: retObj })
+    )
+      .then((data) => {
+        alert("Your schedule has been successfully created.");
+        console.log("DATA CREATED:");
+        console.log(data);
+      })
+      .catch((e) => {
+        //if there is an error, attempt to update instead of add
+        API.graphql(
+          graphqlOperation(mutations.updateUserSchedule, { input: retObj })
+        )
+          .then((data) => {
+            alert("Your schedule has been successfully updated.");
+            console.log("DATA UPDATED:");
+            console.log(data);
+          })
+          .catch((err) => {
+            alert(
+              "Error while trying to create or update a schedule. Press f12 to see console for more details."
+            );
+            console.log("ERROR - Two errors occured: ");
+            console.log(e);
+            console.log(err);
+          });
+      });
   }
 
   //sorts busy blocks
@@ -187,6 +221,10 @@ class BusyForm extends React.Component {
   condenseBusyBlocks() {
     //get clone of busy blocks
     let cloneBlocks = [...this.state.busyBlocks];
+
+    if (cloneBlocks.length < 1) {
+      return [];
+    }
 
     //create condensed array, add first item of busyBlocks clone
     let condensedBlocks = [[...cloneBlocks[0]]];
@@ -323,7 +361,11 @@ class BusyForm extends React.Component {
               <br />
               <div>{errorMessages}</div>
               <input type="button" value="Add" onClick={this.handleAdd} />
-              <input type="button" value="Submit" onClick={this.handleSubmit} />
+              <input
+                type="button"
+                value="Save Changes"
+                onClick={this.handleSubmit}
+              />
             </form>
           </div>
           <br />
@@ -336,16 +378,6 @@ class BusyForm extends React.Component {
   }
 
   // USED FOR TESTING
-
-  // componentDidMount() {
-  //   console.log("mounted");
-  //   console.log(this.state);
-  // }
-
-  // componentDidUpdate() {
-  //   console.log("updated");
-  //   console.log(this.state);
-  // }
 }
 
 export default BusyForm;

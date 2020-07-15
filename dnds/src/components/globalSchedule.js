@@ -34,6 +34,19 @@ class GlobalSchedule extends React.Component {
   }
 
   generateFreeSchedule() {
+    if (this.state.bschedule.length < 1) {
+      this.setState({
+        ...this.state,
+        fschedule: [
+          [
+            ["Nobody entered a schedule yet...", "...Are you all free?"],
+            ["Maybe it's a bug...", "...Or maybe you are the bug, Kafka."],
+          ],
+        ],
+      });
+      return;
+    }
+
     //schedule of free blocks
     let fsched = [];
 

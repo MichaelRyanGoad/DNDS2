@@ -16,7 +16,6 @@ class App extends Component {
     this.state = {
       page: "form",
     };
-    //binds go here
     this.loadFormElement = this.loadFormElement.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
   }
