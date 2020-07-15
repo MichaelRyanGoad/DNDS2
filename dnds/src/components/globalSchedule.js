@@ -10,8 +10,10 @@ class GlobalSchedule extends React.Component {
     this.state = {
       bschedule: [],
       fschedule: [],
+      sessionLength: 60,
     };
     this.generateFreeSchedule = this.generateFreeSchedule.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidUpdate() {
@@ -31,13 +33,14 @@ class GlobalSchedule extends React.Component {
     });
   }
 
-  generateFreeSchedule(sessionLength = 60) {
+  generateFreeSchedule() {
     //schedule of free blocks
     let fsched = [];
 
     //set iterating variables
     let block1 = [];
     let block2 = [];
+    const sessionLength = this.state.sessionLength;
 
     //todo does not currently take care of cases where bschedule has < 2 elements.
 
@@ -135,6 +138,15 @@ class GlobalSchedule extends React.Component {
     return diffInMs / (1000 * 60);
   }
 
+  //change handler
+  handleChange(event) {
+    const value = event.target.value;
+    this.setState({
+      ...this.state,
+      [event.target.name]: value,
+    });
+  }
+
   render() {
     //
 
@@ -162,14 +174,29 @@ class GlobalSchedule extends React.Component {
     ));
 
     return (
-      <div className="splitscreen">
-        <div className="left">
-          <p>Busy Blocks</p>
-          {scheduleCards}
-        </div>
-        <div className="right">
-          <p>Free Blocks</p>
-          {fScheduleCards}
+      <div>
+        <label>Minimum session length (minutes):</label>
+        <input
+          type="text"
+          name="sessionLength"
+          onChange={this.handleChange}
+          value={this.state.sessionLength}
+        />
+        <br />
+        <input
+          type="button"
+          value="Generate Schedule"
+          onClick={this.generateFreeSchedule}
+        />
+        <div className="splitscreen">
+          <div className="left">
+            <p>Busy Blocks</p>
+            {scheduleCards}
+          </div>
+          <div className="right">
+            <p>Free Blocks</p>
+            {fScheduleCards}
+          </div>
         </div>
       </div>
     );
