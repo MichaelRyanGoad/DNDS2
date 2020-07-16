@@ -348,6 +348,7 @@ class BusyForm extends React.Component {
           </div>
           <br />
           <div className="right">
+            <p>Your Busy Blocks:</p>
             <ul>{busyBlockCards}</ul>
           </div>
         </div>
