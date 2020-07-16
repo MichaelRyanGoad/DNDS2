@@ -25,14 +25,8 @@ class BusyForm extends React.Component {
     this.handleAdd = this.handleAdd.bind(this);
     this.removeBusyBlock = this.removeBusyBlock.bind(this);
     this.validateInput = this.validateInput.bind(this);
-    this.condenseBusyBlocks = this.condenseBusyBlocks.bind(this);
     this.sortBusyBlocks = this.sortBusyBlocks.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  componentDidUpdate() {
-    console.log("updated");
-    console.log(this.state);
   }
 
   componentDidMount() {
@@ -69,7 +63,7 @@ class BusyForm extends React.Component {
       schedule: this.state.busyBlocks,
     };
 
-    console.log("Attempting to send object to database");
+    // console.log("Attempting to send object to database");
 
     //first attempt to add retObj to the database
     API.graphql(
@@ -77,8 +71,8 @@ class BusyForm extends React.Component {
     )
       .then((data) => {
         alert("Your schedule has been successfully created.");
-        console.log("DATA CREATED:");
-        console.log(data);
+        // console.log("DATA CREATED:");
+        // console.log(data);
       })
       .catch((e) => {
         //if there is an error, attempt to update instead of add
@@ -87,8 +81,8 @@ class BusyForm extends React.Component {
         )
           .then((data) => {
             alert("Your schedule has been successfully updated.");
-            console.log("DATA UPDATED:");
-            console.log(data);
+            // console.log("DATA UPDATED:");
+            // console.log(data);
           })
           .catch((err) => {
             alert(
@@ -225,86 +219,6 @@ class BusyForm extends React.Component {
     }
   }
 
-  //function to condense the busy blocks
-  condenseBusyBlocks() {
-    //get clone of busy blocks
-    let cloneBlocks = [...this.state.busyBlocks];
-
-    if (cloneBlocks.length < 1) {
-      return [];
-    }
-
-    //create condensed array, add first item of busyBlocks clone
-    let condensedBlocks = [[...cloneBlocks[0]]];
-
-    //loop through busy blocks
-    for (let i = 1; i < cloneBlocks.length; i++) {
-      //get previous blocks
-      let currentBlock = cloneBlocks[i];
-      let previousBlock = condensedBlocks[condensedBlocks.length - 1];
-      //destructure into variables
-      let [
-        currentDay,
-        currentStart,
-        currentEndDate,
-        currentEnd,
-        currentReason,
-      ] = currentBlock;
-      let [
-        previousStartDate,
-        previousStart,
-        previousEndDate,
-        previousEnd,
-        previousReason,
-      ] = previousBlock;
-
-      //check for overlap, if current Day is <= previous End date
-      let isLessThan = currentDay < previousEndDate;
-      let isEqualTo = currentDay === previousEndDate;
-      if (isLessThan || isEqualTo) {
-        if (isLessThan || previousEnd >= currentStart) {
-          //create new merged previous block
-          let newPreviousBlock = [
-            previousStartDate,
-            previousStart,
-            currentEndDate >= previousEndDate
-              ? currentEndDate
-              : previousEndDate,
-            currentEndDate > previousEndDate
-              ? currentEnd
-              : previousEndDate > currentEndDate
-              ? previousEnd
-              : currentEnd >= previousEnd
-              ? currentEnd
-              : previousEnd,
-          ];
-
-          //replace old previous block with the new merged block
-          condensedBlocks[condensedBlocks.length - 1] = newPreviousBlock;
-        } else {
-          //no overlap. Add to array.
-          condensedBlocks.push([
-            currentDay,
-            currentStart,
-            currentEndDate,
-            currentEnd,
-          ]);
-        }
-      } else {
-        //New day, no overlap possible. Add to array.
-        condensedBlocks.push([
-          currentDay,
-          currentStart,
-          currentEndDate,
-          currentEnd,
-        ]);
-      }
-    }
-
-    //return result
-    return condensedBlocks;
-  }
-
   //function to compare order of two date strings
   compareDates(dateString1, dateString2) {
     const d1 = new Date(dateString1);
@@ -435,8 +349,93 @@ class BusyForm extends React.Component {
       </div>
     );
   }
-
-  // USED FOR TESTING
 }
 
 export default BusyForm;
+
+// USED FOR TESTING
+//function to condense the busy blocks
+// condenseBusyBlocks() {
+//   //get clone of busy blocks
+//   let cloneBlocks = [...this.state.busyBlocks];
+
+//   if (cloneBlocks.length < 1) {
+//     return [];
+//   }
+
+//   //create condensed array, add first item of busyBlocks clone
+//   let condensedBlocks = [[...cloneBlocks[0]]];
+
+//   //loop through busy blocks
+//   for (let i = 1; i < cloneBlocks.length; i++) {
+//     //get previous blocks
+//     let currentBlock = cloneBlocks[i];
+//     let previousBlock = condensedBlocks[condensedBlocks.length - 1];
+//     //destructure into variables
+//     let [
+//       currentDay,
+//       currentStart,
+//       currentEndDate,
+//       currentEnd,
+//       currentReason,
+//     ] = currentBlock;
+//     let [
+//       previousStartDate,
+//       previousStart,
+//       previousEndDate,
+//       previousEnd,
+//       previousReason,
+//     ] = previousBlock;
+
+//     //check for overlap, if current Day is <= previous End date
+//     let isLessThan = currentDay < previousEndDate;
+//     let isEqualTo = currentDay === previousEndDate;
+//     if (isLessThan || isEqualTo) {
+//       if (isLessThan || previousEnd >= currentStart) {
+//         //create new merged previous block
+//         let newPreviousBlock = [
+//           previousStartDate,
+//           previousStart,
+//           currentEndDate >= previousEndDate
+//             ? currentEndDate
+//             : previousEndDate,
+//           currentEndDate > previousEndDate
+//             ? currentEnd
+//             : previousEndDate > currentEndDate
+//             ? previousEnd
+//             : currentEnd >= previousEnd
+//             ? currentEnd
+//             : previousEnd,
+//         ];
+
+//         //replace old previous block with the new merged block
+//         condensedBlocks[condensedBlocks.length - 1] = newPreviousBlock;
+//       } else {
+//         //no overlap. Add to array.
+//         condensedBlocks.push([
+//           currentDay,
+//           currentStart,
+//           currentEndDate,
+//           currentEnd,
+//         ]);
+//       }
+//     } else {
+//       //New day, no overlap possible. Add to array.
+//       condensedBlocks.push([
+//         currentDay,
+//         currentStart,
+//         currentEndDate,
+//         currentEnd,
+//       ]);
+//     }
+//   }
+
+//   //return result
+//   return condensedBlocks;
+// }
+
+//debug
+// componentDidUpdate() {
+//   console.log("updated");
+//   console.log(this.state);
+// }

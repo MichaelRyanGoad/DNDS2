@@ -16,14 +16,16 @@ class GlobalSchedule extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidUpdate() {
-    console.log("updated");
-    console.log(this.state);
-  }
+  //Debugging purposes
+  // componentDidUpdate() {
+  //   console.log("updated");
+  //   console.log(this.state);
+  // }
 
   componentDidMount() {
-    console.log("mounted");
-    console.log(this.state);
+    //debug
+    // console.log("mounted");
+    // console.log(this.state);
     //query database for global schedule and set state
     API.graphql(
       graphqlOperation(queries.getUserSchedule, { username: "global" })
@@ -99,8 +101,6 @@ class GlobalSchedule extends React.Component {
     let endTime = this.state.bschedule[0][1];
     let d2 = new Date(endDate + " " + endTime);
 
-    console.log(d2);
-
     //check if starting pad meets session length and add to fsched if so
     if (this.getDifferenceInMinutes(date, d2) >= sessionLength) {
       const startPadding = [
@@ -161,10 +161,6 @@ class GlobalSchedule extends React.Component {
       ...this.state,
       fschedule: fsched,
     });
-
-    //temp logs
-    console.log("TESTER2");
-    console.log(fsched);
   }
 
   //format to get the number of minutes between two date objects
