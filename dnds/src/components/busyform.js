@@ -50,13 +50,9 @@ class BusyForm extends React.Component {
           console.log("ERROR");
           console.log(err);
         } else {
-          let modSched = data.data.getUserSchedule.schedule;
-          modSched.forEach((data, idx) => {
-            data.splice(0, 0, "Block " + idx);
-          });
           this.setState({
             ...this.state,
-            busyBlocks: modSched,
+            busyBlocks: data.data.getUserSchedule.schedule,
           });
         }
       });
@@ -70,7 +66,7 @@ class BusyForm extends React.Component {
     //set up return object
     let retObj = {
       username: this.state.currentUser,
-      schedule: this.condenseBusyBlocks(),
+      schedule: this.state.busyBlocks,
     };
 
     console.log("Attempting to send object to database");
@@ -112,10 +108,10 @@ class BusyForm extends React.Component {
 
     //sort function
     clone.sort(function (x, y) {
-      if (x[1] !== y[1]) {
-        return x[1] < y[1] ? -1 : 1;
+      if (x[0] !== y[0]) {
+        return x[0] < y[0] ? -1 : 1;
       }
-      return x[2] < y[2] ? -1 : 1;
+      return x[1] < y[1] ? -1 : 1;
     });
 
     //set new state
@@ -211,11 +207,11 @@ class BusyForm extends React.Component {
     event.preventDefault();
 
     const data = [
-      this.state.name,
       this.state.startDate,
       this.state.bstime,
       this.state.endDate,
       this.state.betime,
+      this.state.name,
     ];
 
     //Validate the input before adding to state
@@ -240,7 +236,6 @@ class BusyForm extends React.Component {
 
     //create condensed array, add first item of busyBlocks clone
     let condensedBlocks = [[...cloneBlocks[0]]];
-    condensedBlocks[0].splice(0, 1);
 
     //loop through busy blocks
     for (let i = 1; i < cloneBlocks.length; i++) {
@@ -249,17 +244,18 @@ class BusyForm extends React.Component {
       let previousBlock = condensedBlocks[condensedBlocks.length - 1];
       //destructure into variables
       let [
-        ,
         currentDay,
         currentStart,
         currentEndDate,
         currentEnd,
+        currentReason,
       ] = currentBlock;
       let [
         previousStartDate,
         previousStart,
         previousEndDate,
         previousEnd,
+        previousReason,
       ] = previousBlock;
 
       //check for overlap, if current Day is <= previous End date
@@ -353,11 +349,11 @@ class BusyForm extends React.Component {
   render() {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
       <div className="Card" key={idx}>
-        <li key={idx + "name"}>{data[0]}</li>
-        <li key={idx + "startDate"}>{data[1]}</li>
-        <li key={idx + "start"}>{data[2]}</li>
-        <li key={idx + "endDate"}>{data[3]}</li>
-        <li key={idx + "stop"}>{data[4]}</li>
+        <p key={idx + "name"}>{data[4]}</p>
+        <li key={idx + "startDate"}>{data[0]}</li>
+        <li key={idx + "start"}>{data[1]}</li>
+        <li key={idx + "endDate"}>{data[2]}</li>
+        <li key={idx + "stop"}>{data[3]}</li>
         <button onClick={(event) => this.removeBusyBlock(data, idx)}>
           remove
         </button>

@@ -187,10 +187,16 @@ class GlobalSchedule extends React.Component {
 
     let scheduleCards = this.state.bschedule.map((data, idx) => (
       <div key={idx + "div"} className="Card">
-        <p key={idx + "startDate"}>{data[0]}</p>
-        <li key={idx + "startTime"}>{data[1]}</li>
-        <p key={idx + "endDate"}>{data[2]}</p>
-        <li key={idx + "endTime"}>{data[3]}</li>
+        <div className="splitscreen">
+          <div className="left">
+            <p key={idx + "startDate"}>{data[0]}</p>
+            <li key={idx + "startTime"}>{data[1]}</li>
+          </div>
+          <div className="right">
+            <p key={idx + "endDate"}>{data[2]}</p>
+            <li key={idx + "endTime"}>{data[3]}</li>
+          </div>
+        </div>
       </div>
     ));
 
