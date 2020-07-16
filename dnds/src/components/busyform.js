@@ -44,9 +44,15 @@ class BusyForm extends React.Component {
           console.log("ERROR");
           console.log(err);
         } else {
+          let bb = data.data.getUserSchedule;
+          if (bb === null) {
+            bb = [];
+          } else {
+            bb = bb.schedule;
+          }
           this.setState({
             ...this.state,
-            busyBlocks: data.data.getUserSchedule.schedule,
+            busyBlocks: bb,
           });
         }
       });
@@ -137,7 +143,6 @@ class BusyForm extends React.Component {
     let dd = String(date.getDate()).padStart(2, "0");
     const today = yyyy + "-" + mm + "-" + dd;
 
-    //todo turn this into message elements instead of alerts.
     //custom validation checks.
 
     //Check for empty values
@@ -176,10 +181,10 @@ class BusyForm extends React.Component {
     for (let i = 0; i < this.state.busyBlocks.length; i++) {
       let curBlock = this.state.busyBlocks[i];
       if (
-        curBlock[1] === this.state.startDate &&
-        curBlock[2] === this.state.bstime &&
-        curBlock[3] === this.state.endDate &&
-        curBlock[4] === this.state.betime
+        curBlock[0] === this.state.startDate &&
+        curBlock[1] === this.state.bstime &&
+        curBlock[2] === this.state.endDate &&
+        curBlock[3] === this.state.betime
       ) {
         errMsg.push("This time block already exists!");
         isValid = false;

@@ -48,7 +48,10 @@ class GlobalSchedule extends React.Component {
         fschedule: [
           [
             ["This is where a schedule would go...", "...IF I HAD ONE!"],
-            ["Maybe it's a bug...", "...Or maybe you are the bug, Kafka."],
+            [
+              "Nobody has entered any busy blocks...",
+              "...are you all free now?",
+            ],
           ],
         ],
       });
@@ -232,7 +235,7 @@ class GlobalSchedule extends React.Component {
             {scheduleCards}
           </div>
           <div className="right">
-            <p>Free Blocks</p>
+            <p>Free Blocks (during the next 2 weeks)</p>
             {fScheduleCards}
           </div>
         </div>
