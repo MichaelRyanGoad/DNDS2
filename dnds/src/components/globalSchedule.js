@@ -17,10 +17,13 @@ class GlobalSchedule extends React.Component {
   }
 
   componentDidUpdate() {
+    console.log("updated");
     console.log(this.state);
   }
 
   componentDidMount() {
+    console.log("mounted");
+    console.log(this.state);
     //query database for global schedule and set state
     API.graphql(
       graphqlOperation(queries.getUserSchedule, { username: "global" })
@@ -28,7 +31,10 @@ class GlobalSchedule extends React.Component {
       if (err) {
         console.log(err);
       }
-      this.setState({ bschedule: data.data.getUserSchedule.schedule });
+      this.setState({
+        ...this.state,
+        bschedule: data.data.getUserSchedule.schedule,
+      });
       this.generateFreeSchedule();
     });
   }
@@ -39,7 +45,7 @@ class GlobalSchedule extends React.Component {
         ...this.state,
         fschedule: [
           [
-            ["Nobody entered a schedule yet...", "...Are you all free?"],
+            ["This is where a schedule would go...", "...IF I HAD ONE!"],
             ["Maybe it's a bug...", "...Or maybe you are the bug, Kafka."],
           ],
         ],
@@ -106,9 +112,9 @@ class GlobalSchedule extends React.Component {
 
     //todo pad end
 
-    //get date 1 week from now
-    let nextWeek = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
-    //set cap to end of day 1 week from now
+    //get date 2 weeks from now
+    let nextWeek = new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000);
+    //set cap to end of day
     nextWeek.setHours(23, 59, 59);
     yyyy = nextWeek.getFullYear();
     mm = String(nextWeek.getMonth() + 1).padStart(2, "0");
@@ -116,8 +122,8 @@ class GlobalSchedule extends React.Component {
     endDate = yyyy + "-" + mm + "-" + dd;
 
     //get date and times variables for end padding
-    startTime = this.state.bschedule[this.state.bschedule.length - 1][2];
-    let startDate = this.state.bschedule[this.state.bschedule.length - 1][0];
+    startTime = this.state.bschedule[this.state.bschedule.length - 1][3];
+    let startDate = this.state.bschedule[this.state.bschedule.length - 1][2];
 
     endTime =
       (nextWeek.getHours() + "").padStart(2, "0") +
@@ -125,13 +131,29 @@ class GlobalSchedule extends React.Component {
       (nextWeek.getMinutes() + "").padStart(2, "0");
     d2 = new Date(startDate + " " + startTime);
 
-    //check if starting pad meets session length and add to fsched if so
-    if (this.getDifferenceInMinutes(nextWeek, d2) >= sessionLength) {
+    //check if ending pad meets session length and add to fsched if so
+    if (this.getDifferenceInMinutes(d2, nextWeek) >= sessionLength) {
       const endPadding = [
         [startDate, startTime],
         [endDate, endTime],
       ];
       fsched.push(endPadding);
+    }
+
+    //
+    if (fsched.length < 1) {
+      fsched = [
+        [
+          [
+            "Nobody's schedule aligned...",
+            "...it's probably because you are adults...",
+          ],
+          [
+            "...maybe your session length is too long...",
+            "...maybe lower your expectations?",
+          ],
+        ],
+      ];
     }
 
     //update state
@@ -147,7 +169,7 @@ class GlobalSchedule extends React.Component {
 
   //format to get the number of minutes between two date objects
   getDifferenceInMinutes(date1, date2) {
-    const diffInMs = Math.abs(date2 - date1);
+    const diffInMs = date2 - date1;
     return diffInMs / (1000 * 60);
   }
 
@@ -165,9 +187,10 @@ class GlobalSchedule extends React.Component {
 
     let scheduleCards = this.state.bschedule.map((data, idx) => (
       <div key={idx + "div"} className="Card">
-        <p key={idx + "date"}>{data[0]}</p>
-        <li key={idx + "start"}>{data[1]}</li>
-        <li key={idx + "end"}>{data[2]}</li>
+        <p key={idx + "startDate"}>{data[0]}</p>
+        <li key={idx + "startTime"}>{data[1]}</li>
+        <p key={idx + "endDate"}>{data[2]}</p>
+        <li key={idx + "endTime"}>{data[3]}</li>
       </div>
     ));
 

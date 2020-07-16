@@ -12,8 +12,9 @@ class BusyForm extends React.Component {
     this.state = {
       busyBlocks: [],
       name: "",
-      date: "",
+      startDate: "",
       bstime: "",
+      endDate: "",
       betime: "",
       eMsg: [],
       currentUser: "",
@@ -133,7 +134,7 @@ class BusyForm extends React.Component {
   }
 
   //input validator
-  validateInput(data) {
+  validateInput() {
     //set bool for return
     let isValid = true;
 
@@ -152,8 +153,9 @@ class BusyForm extends React.Component {
     //Check for empty values
     if (
       !this.state.name ||
-      !this.state.date ||
+      !this.state.startDate ||
       !this.state.bstime ||
+      !this.state.endDate ||
       !this.state.betime
     ) {
       errMsg.push("Please fill in all fields.");
@@ -161,13 +163,21 @@ class BusyForm extends React.Component {
     }
 
     //Check that end time is after start time
-    if (this.state.bstime >= this.state.betime) {
-      errMsg.push("Please make sure your end time is after your start time");
+    if (this.state.startDate === this.state.endDate) {
+      if (this.state.bstime >= this.state.betime) {
+        errMsg.push("Please make sure your end time is after your start time");
+        isValid = false;
+      }
+    }
+
+    //check to make sure dates are in proper order
+    if (this.state.startDate > this.state.endDate) {
+      errMsg.push("Please make sure your end date is after your start date.");
       isValid = false;
     }
 
-    //Check that day is not in the past.
-    if (this.state.date < today) {
+    //Check that dates are not in the past.
+    if (this.state.startDate < today || this.state.endDate < today) {
       errMsg.push("Dates must not be in the past");
       isValid = false;
     }
@@ -176,9 +186,10 @@ class BusyForm extends React.Component {
     for (let i = 0; i < this.state.busyBlocks.length; i++) {
       let curBlock = this.state.busyBlocks[i];
       if (
-        curBlock[1] === this.state.date &&
+        curBlock[1] === this.state.startDate &&
         curBlock[2] === this.state.bstime &&
-        curBlock[3] === this.state.betime
+        curBlock[3] === this.state.endDate &&
+        curBlock[4] === this.state.betime
       ) {
         errMsg.push("This time block already exists!");
         isValid = false;
@@ -201,13 +212,14 @@ class BusyForm extends React.Component {
 
     const data = [
       this.state.name,
-      this.state.date,
+      this.state.startDate,
       this.state.bstime,
+      this.state.endDate,
       this.state.betime,
     ];
 
     //Validate the input before adding to state
-    const isValid = this.validateInput(data);
+    const isValid = this.validateInput();
     if (isValid) {
       //add the form data to the current state
       this.addBusyBlock(data);
@@ -236,33 +248,74 @@ class BusyForm extends React.Component {
       let currentBlock = cloneBlocks[i];
       let previousBlock = condensedBlocks[condensedBlocks.length - 1];
       //destructure into variables
-      let [, currentDay, currentStart, currentEnd] = currentBlock;
-      let [previousDay, previousStart, previousEnd] = previousBlock;
+      let [
+        ,
+        currentDay,
+        currentStart,
+        currentEndDate,
+        currentEnd,
+      ] = currentBlock;
+      let [
+        previousStartDate,
+        previousStart,
+        previousEndDate,
+        previousEnd,
+      ] = previousBlock;
 
-      //if the current day is the same as previous, check for overlap
-      if (previousDay === currentDay) {
-        if (previousEnd >= currentStart) {
+      //check for overlap, if current Day is <= previous End date
+      let isLessThan = currentDay < previousEndDate;
+      let isEqualTo = currentDay === previousEndDate;
+      if (isLessThan || isEqualTo) {
+        if (isLessThan || previousEnd >= currentStart) {
           //create new merged previous block
           let newPreviousBlock = [
-            currentDay,
+            previousStartDate,
             previousStart,
-            currentEnd >= previousEnd ? currentEnd : previousEnd,
+            currentEndDate >= previousEndDate
+              ? currentEndDate
+              : previousEndDate,
+            currentEndDate > previousEndDate
+              ? currentEnd
+              : previousEndDate > currentEndDate
+              ? previousEnd
+              : currentEnd >= previousEnd
+              ? currentEnd
+              : previousEnd,
           ];
 
           //replace old previous block with the new merged block
           condensedBlocks[condensedBlocks.length - 1] = newPreviousBlock;
         } else {
-          //same day, no overlap. Add to array.
-          condensedBlocks.push([currentDay, currentStart, currentEnd]);
+          //no overlap. Add to array.
+          condensedBlocks.push([
+            currentDay,
+            currentStart,
+            currentEndDate,
+            currentEnd,
+          ]);
         }
       } else {
         //New day, no overlap possible. Add to array.
-        condensedBlocks.push([currentDay, currentStart, currentEnd]);
+        condensedBlocks.push([
+          currentDay,
+          currentStart,
+          currentEndDate,
+          currentEnd,
+        ]);
       }
     }
 
     //return result
     return condensedBlocks;
+  }
+
+  //function to compare order of two date strings
+  compareDates(dateString1, dateString2) {
+    const d1 = new Date(dateString1);
+    const d2 = new Date(dateString2);
+    if (d1 < d2) return 1;
+    if (d1 === d2) return 0;
+    return -1;
   }
 
   //function to add busy block to current state
@@ -301,9 +354,10 @@ class BusyForm extends React.Component {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
       <div className="Card" key={idx}>
         <li key={idx + "name"}>{data[0]}</li>
-        <li key={idx + "date"}>{data[1]}</li>
+        <li key={idx + "startDate"}>{data[1]}</li>
         <li key={idx + "start"}>{data[2]}</li>
-        <li key={idx + "stop"}>{data[3]}</li>
+        <li key={idx + "endDate"}>{data[3]}</li>
+        <li key={idx + "stop"}>{data[4]}</li>
         <button onClick={(event) => this.removeBusyBlock(data, idx)}>
           remove
         </button>
@@ -322,7 +376,7 @@ class BusyForm extends React.Component {
         <div className="splitscreen">
           <div className="left">
             <form>
-              <label htmlFor="name">Name:</label>
+              <label htmlFor="name">Busy Block Name:</label>
               <br />
               <input
                 required="required"
@@ -332,12 +386,12 @@ class BusyForm extends React.Component {
                 onChange={this.handleChange}
               />
               <br />
-              <label htmlFor="date">Date:</label>
+              <label htmlFor="startDate">Busy Start Date:</label>
               <br />
               <input
                 type="date"
-                name="date"
-                value={this.state.date}
+                name="startDate"
+                value={this.state.startDate}
                 onChange={this.handleChange}
               />
               <br />
@@ -347,6 +401,15 @@ class BusyForm extends React.Component {
                 type="time"
                 name="bstime"
                 value={this.state.bstime}
+                onChange={this.handleChange}
+              />
+              <br />
+              <label htmlFor="endDate">Busy End Date:</label>
+              <br />
+              <input
+                type="date"
+                name="endDate"
+                value={this.state.endDate}
                 onChange={this.handleChange}
               />
               <br />
