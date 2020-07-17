@@ -14,13 +14,34 @@ class GlobalSchedule extends React.Component {
     };
     this.generateFreeSchedule = this.generateFreeSchedule.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.isItDST = this.isItDST.bind(this);
+    this.handleTimeZones = this.handleTimeZones.bind(this);
   }
 
   //Debugging purposes
-  // componentDidUpdate() {
-  //   console.log("updated");
-  //   console.log(this.state);
-  // }
+  componentDidUpdate() {
+    console.log("updated");
+    console.log(this.state);
+  }
+
+  handleTimeZones(d) {
+    d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
+    let offset = -300;
+    if (this.isItDST()) {
+      offset = -240;
+    }
+    d.setTime(d.getTime() + offset * 60 * 1000);
+  }
+
+  isItDST() {
+    const today = new Date();
+    const jan = new Date(today.getFullYear(), 0, 1);
+
+    if (today.getTimezoneOffset() === jan.getTimezoneOffset()) {
+      return false;
+    }
+    return true;
+  }
 
   componentDidMount() {
     //debug
@@ -33,11 +54,13 @@ class GlobalSchedule extends React.Component {
       if (err) {
         console.log(err);
       }
-      this.setState({
-        ...this.state,
-        bschedule: data.data.getUserSchedule.schedule,
-      });
-      this.generateFreeSchedule();
+      console.log(data.data.getUserSchedule);
+      this.setState(
+        {
+          bschedule: data.data.getUserSchedule.schedule,
+        },
+        this.generateFreeSchedule
+      );
     });
   }
 
@@ -49,8 +72,8 @@ class GlobalSchedule extends React.Component {
           [
             ["This is where a schedule would go...", "...IF I HAD ONE!"],
             [
-              "Nobody has entered any busy blocks...",
-              "...are you all free now?",
+              "Try clicking generate schedule...",
+              "...or are you all free now?",
             ],
           ],
         ],
@@ -74,13 +97,13 @@ class GlobalSchedule extends React.Component {
       block2 = this.state.bschedule[x];
 
       //format date objects from blocks
-      let d1 = new Date(block1[0] + " " + block1[2]);
+      let d1 = new Date(block1[2] + " " + block1[3]);
       let d2 = new Date(block2[0] + " " + block2[1]);
 
       //if block between dates is >= minimum session length, add it to the list of free blocks.
       if (this.getDifferenceInMinutes(d1, d2) >= sessionLength) {
         fsched.push([
-          [block1[0], block1[2]],
+          [block1[2], block1[3]],
           [block2[0], block2[1]],
         ]);
       }
@@ -89,7 +112,8 @@ class GlobalSchedule extends React.Component {
     //padding start and end of week
 
     //getting current date
-    const date = new Date();
+    let date = new Date();
+    this.handleTimeZones(date);
     let yyyy = date.getFullYear();
     let mm = String(date.getMonth() + 1).padStart(2, "0");
     let dd = String(date.getDate()).padStart(2, "0");
