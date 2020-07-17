@@ -282,7 +282,7 @@ class BusyForm extends React.Component {
           </div>
           <input
             type="button"
-            value="remove"
+            value="Remove"
             onClick={(event) => this.removeBusyBlock(data, idx)}
           />
         </div>
@@ -360,7 +360,7 @@ class BusyForm extends React.Component {
           </div>
           <br />
           <div className="right">
-            <h2>Your Busy Blocks:</h2>
+            <h2>Your Busy Blocks (EST):</h2>
             <ul>{busyBlockCards}</ul>
           </div>
         </div>

@@ -176,7 +176,7 @@ class GlobalSchedule extends React.Component {
             "...it's probably because you are adults...",
           ],
           [
-            "...maybe your session length is too long...",
+            "Your session length might be too long...",
             "...maybe lower your expectations?",
           ],
         ],
@@ -262,11 +262,11 @@ class GlobalSchedule extends React.Component {
         />
         <div className="splitscreen">
           <div className="left">
-            <h2>Busy Blocks</h2>
+            <h2>Busy Blocks (EST):</h2>
             {scheduleCards}
           </div>
           <div className="right">
-            <h2>Free Blocks (during the next 2 weeks)</h2>
+            <h2>Free Blocks (during the next 2 weeks):</h2>
             {fScheduleCards}
           </div>
         </div>
