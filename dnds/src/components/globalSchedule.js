@@ -209,32 +209,38 @@ class GlobalSchedule extends React.Component {
     //
 
     let scheduleCards = this.state.bschedule.map((data, idx) => (
-      <div key={idx + "div"} className="Card">
-        <div className="splitscreen">
-          <div className="left">
-            <p key={idx + "startDate"}>{data[0]}</p>
-            <li key={idx + "startTime"}>{data[1]}</li>
-          </div>
-          <div className="right">
-            <p key={idx + "endDate"}>{data[2]}</p>
-            <li key={idx + "endTime"}>{data[3]}</li>
+      <div>
+        <div key={idx + "div"} className="Card">
+          <div className="splitscreen">
+            <div className="left">
+              <p key={idx + "startDate"}>{data[0]}</p>
+              <li key={idx + "startTime"}>{data[1]}</li>
+            </div>
+            <div className="right">
+              <p key={idx + "endDate"}>{data[2]}</p>
+              <li key={idx + "endTime"}>{data[3]}</li>
+            </div>
           </div>
         </div>
+        <br />
       </div>
     ));
 
     let fScheduleCards = this.state.fschedule.map((data, idx) => (
-      <div key={idx + "div"} className="Card">
-        <div className="splitscreen">
-          <div className="left">
-            <p key={idx + "startDate"}>{data[0][0]}</p>
-            <li key={idx + "startTime"}>{data[0][1]}</li>
-          </div>
-          <div className="right">
-            <p key={idx + "endDate"}>{data[1][0]}</p>
-            <li key={idx + "endTime"}>{data[1][1]}</li>
+      <div>
+        <div key={idx + "div"} className="Card">
+          <div className="splitscreen">
+            <div className="left">
+              <p key={idx + "startDate"}>{data[0][0]}</p>
+              <li key={idx + "startTime"}>{data[0][1]}</li>
+            </div>
+            <div className="right">
+              <p key={idx + "endDate"}>{data[1][0]}</p>
+              <li key={idx + "endTime"}>{data[1][1]}</li>
+            </div>
           </div>
         </div>
+        <br />
       </div>
     ));
 
@@ -246,6 +252,7 @@ class GlobalSchedule extends React.Component {
           name="sessionLength"
           onChange={this.handleChange}
           value={this.state.sessionLength}
+          size={3}
         />
         <br />
         <input
@@ -255,11 +262,11 @@ class GlobalSchedule extends React.Component {
         />
         <div className="splitscreen">
           <div className="left">
-            <p>Busy Blocks</p>
+            <h2>Busy Blocks</h2>
             {scheduleCards}
           </div>
           <div className="right">
-            <p>Free Blocks (during the next 2 weeks)</p>
+            <h2>Free Blocks (during the next 2 weeks)</h2>
             {fScheduleCards}
           </div>
         </div>

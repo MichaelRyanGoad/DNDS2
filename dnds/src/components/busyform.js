@@ -267,15 +267,26 @@ class BusyForm extends React.Component {
   //function for rendering component
   render() {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
-      <div className="Card" key={idx}>
-        <p key={idx + "name"}>{data[4]}</p>
-        <li key={idx + "startDate"}>{data[0]}</li>
-        <li key={idx + "start"}>{data[1]}</li>
-        <li key={idx + "endDate"}>{data[2]}</li>
-        <li key={idx + "stop"}>{data[3]}</li>
-        <button onClick={(event) => this.removeBusyBlock(data, idx)}>
-          remove
-        </button>
+      <div>
+        <div className="Card" key={idx}>
+          <label key={idx + "name"}>{data[4]}</label>
+          <div className="splitscreen">
+            <div className="left">
+              <li key={idx + "startDate"}>{data[0]}</li>
+              <li key={idx + "start"}>{data[1]}</li>
+            </div>
+            <div className="right">
+              <li key={idx + "endDate"}>{data[2]}</li>
+              <li key={idx + "stop"}>{data[3]}</li>
+            </div>
+          </div>
+          <input
+            type="button"
+            value="remove"
+            onClick={(event) => this.removeBusyBlock(data, idx)}
+          />
+        </div>
+        <br />
       </div>
     ));
 
@@ -288,8 +299,9 @@ class BusyForm extends React.Component {
     return (
       <div className="outerMost">
         {" "}
-        <div className="splitscreen">
+        <div className="bsplitscreen">
           <div className="left">
+            <h2>Input Busy Block:</h2>
             <form>
               <label htmlFor="name">Busy Block Name:</label>
               <br />
@@ -348,7 +360,7 @@ class BusyForm extends React.Component {
           </div>
           <br />
           <div className="right">
-            <p>Your Busy Blocks:</p>
+            <h2>Your Busy Blocks:</h2>
             <ul>{busyBlockCards}</ul>
           </div>
         </div>

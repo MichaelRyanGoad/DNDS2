@@ -3,6 +3,7 @@
   /* border: 1px;
   border-style: solid;
   border-color: rgb(255, 51, 0); */
+  font-size: calc(1px + 2vmin);
 }
 
 .App-logo {
@@ -28,7 +29,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(1px + 2vmin);
   color: white;
   /* border: 1px;
   border-style: solid;
@@ -37,7 +38,9 @@
 
 .App-body {
   background-color: #647597;
-  font-size: calc(10px + 1vmin);
+  display: flex;
+  flex-direction: column;
+  font-size: calc(5px + 2vmin);
 }
 
 .App-link {
@@ -48,6 +51,11 @@
   border: 1px;
   border-style: solid;
   border-color: black;
+  padding: 30px;
+  position: relative;
+  background-image: url("./Parchment.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .ErrorMessage {
@@ -56,11 +64,29 @@
   font-weight: bold;
 }
 
+.bsplitscreen {
+  display: flex;
+}
+
+.bsplitscreen .left {
+  flex: 1;
+  position: relative;
+  max-width: 50%;
+  padding-left: 10%;
+}
+.bsplitscreen .right {
+  flex: 1;
+  position: relative;
+  max-width: 50%;
+  padding-right: 10%;
+}
+
 .splitscreen {
   /* border: 1px;
   border-style: solid;
   border-color: blue; */
   display: flex;
+  flex-flow: wrap;
 }
 
 /* .outerMost {
@@ -72,11 +98,18 @@
 
 .splitscreen .left {
   flex: 1;
-  padding: 5%;
+  max-width: 50%;
+  padding: 10%;
 }
 .splitscreen .right {
   flex: 1;
-  padding: 5%;
+  max-width: 50%;
+  padding: 10%;
+}
+
+input,
+p {
+  font-size: calc(5px + 2vmin);
 }
 
 @keyframes App-logo-spin {
