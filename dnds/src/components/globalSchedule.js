@@ -19,10 +19,10 @@ class GlobalSchedule extends React.Component {
   }
 
   //Debugging purposes
-  componentDidUpdate() {
-    console.log("updated");
-    console.log(this.state);
-  }
+  // componentDidUpdate() {
+  //   console.log("updated");
+  //   console.log(this.state);
+  // }
 
   handleTimeZones(d) {
     d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
@@ -54,7 +54,7 @@ class GlobalSchedule extends React.Component {
       if (err) {
         console.log(err);
       }
-      console.log(data.data.getUserSchedule);
+      //console.log(data.data.getUserSchedule);
       this.setState(
         {
           bschedule: data.data.getUserSchedule.schedule,
