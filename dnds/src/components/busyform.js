@@ -18,6 +18,7 @@ class BusyForm extends React.Component {
       betime: "",
       eMsg: [],
       currentUser: "",
+      unsavedChanges: false,
     };
     //binds go here
     this.addBusyBlock = this.addBusyBlock.bind(this);
@@ -78,6 +79,9 @@ class BusyForm extends React.Component {
     )
       .then((data) => {
         alert("Your schedule has been successfully created.");
+        this.setState({
+          unsavedChanges: false,
+        });
         // console.log("DATA CREATED:");
         // console.log(data);
       })
@@ -88,6 +92,9 @@ class BusyForm extends React.Component {
         )
           .then((data) => {
             alert("Your schedule has been successfully updated.");
+            this.setState({
+              unsavedChanges: false,
+            });
             // console.log("DATA UPDATED:");
             // console.log(data);
           })
@@ -246,6 +253,7 @@ class BusyForm extends React.Component {
     this.setState(
       {
         busyBlocks: curBusyBlocks,
+        unsavedChanges: true,
       },
       () => {
         this.sortBusyBlocks();
@@ -262,7 +270,7 @@ class BusyForm extends React.Component {
     curBusyBlocks.splice(idx, 1);
 
     //update current state
-    this.setState({ busyBlocks: curBusyBlocks });
+    this.setState({ busyBlocks: curBusyBlocks, unsavedChanges: true });
   }
 
   isItDST() {
@@ -278,7 +286,7 @@ class BusyForm extends React.Component {
   //function for rendering component
   render() {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
-      <div>
+      <div key={idx + "outermostDiv"}>
         <div className="Card Card-Blue" key={idx}>
           <br></br>
           <label key={idx + "name"}>{data[4]}</label>
@@ -373,6 +381,11 @@ class BusyForm extends React.Component {
           <br />
           <div className="aright">
             <h2>Your Busy Blocks ({this.isItDST() ? "EDT" : "EST"}):</h2>
+            {this.state.unsavedChanges ? (
+              <p className="unsavedWarning">You have unsaved changes.</p>
+            ) : (
+              ""
+            )}
             <ul>{busyBlockCards}</ul>
           </div>
         </div>

@@ -105,6 +105,10 @@
   padding-left: 5%;
 }
 
+.unsavedWarning {
+  color: darkred;
+}
+
 input,
 p {
   font-size: calc(2vmin);

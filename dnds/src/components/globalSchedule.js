@@ -73,7 +73,7 @@ class GlobalSchedule extends React.Component {
             ["This is where a schedule would go...", "...IF I HAD ONE!"],
             [
               "Try clicking generate schedule...",
-              "...or are you all free now?",
+              "...or are you all free right now?",
             ],
           ],
         ],
@@ -209,7 +209,7 @@ class GlobalSchedule extends React.Component {
     //
 
     let scheduleCards = this.state.bschedule.map((data, idx) => (
-      <div>
+      <div key={idx + "outermostDiv"}>
         <div key={idx + "div"} className="Card Card-Red">
           <div className="splitscreen">
             <div className="bleft">
@@ -227,7 +227,7 @@ class GlobalSchedule extends React.Component {
     ));
 
     let fScheduleCards = this.state.fschedule.map((data, idx) => (
-      <div>
+      <div key={idx + "outermostDiv"}>
         <div key={idx + "div"} className="Card Card-Green">
           <div className="splitscreen">
             <div className="bleft">
