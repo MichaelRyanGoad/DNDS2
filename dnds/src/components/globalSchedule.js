@@ -210,14 +210,14 @@ class GlobalSchedule extends React.Component {
 
     let scheduleCards = this.state.bschedule.map((data, idx) => (
       <div>
-        <div key={idx + "div"} className="Card">
+        <div key={idx + "div"} className="Card Card-Red">
           <div className="splitscreen">
-            <div className="left">
-              <p key={idx + "startDate"}>{data[0]}</p>
+            <div className="bleft">
+              <label key={idx + "startDate"}>{data[0]}</label>
               <li key={idx + "startTime"}>{data[1]}</li>
             </div>
-            <div className="right">
-              <p key={idx + "endDate"}>{data[2]}</p>
+            <div className="bright">
+              <label key={idx + "endDate"}>{data[2]}</label>
               <li key={idx + "endTime"}>{data[3]}</li>
             </div>
           </div>
@@ -228,14 +228,14 @@ class GlobalSchedule extends React.Component {
 
     let fScheduleCards = this.state.fschedule.map((data, idx) => (
       <div>
-        <div key={idx + "div"} className="Card">
+        <div key={idx + "div"} className="Card Card-Green">
           <div className="splitscreen">
-            <div className="left">
-              <p key={idx + "startDate"}>{data[0][0]}</p>
+            <div className="bleft">
+              <label key={idx + "startDate"}>{data[0][0]}</label>
               <li key={idx + "startTime"}>{data[0][1]}</li>
             </div>
-            <div className="right">
-              <p key={idx + "endDate"}>{data[1][0]}</p>
+            <div className="bright">
+              <label key={idx + "endDate"}>{data[1][0]}</label>
               <li key={idx + "endTime"}>{data[1][1]}</li>
             </div>
           </div>
@@ -261,11 +261,11 @@ class GlobalSchedule extends React.Component {
           onClick={this.generateFreeSchedule}
         />
         <div className="splitscreen">
-          <div className="left">
-            <h2>Busy Blocks (EST):</h2>
+          <div className="bleft">
+            <h2>Busy Blocks ({this.isItDST() ? "EDT" : "EST"}):</h2>
             {scheduleCards}
           </div>
-          <div className="right">
+          <div className="bright">
             <h2>Free Blocks (during the next 2 weeks):</h2>
             {fScheduleCards}
           </div>

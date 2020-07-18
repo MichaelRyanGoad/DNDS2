@@ -48,14 +48,27 @@
 }
 
 .Card {
+  font-size: calc(1.8vmin);
+  font-weight: bold;
   border: 1px;
   border-style: solid;
   border-color: black;
-  padding: 30px;
   position: relative;
   background-image: url("./Parchment.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.Card-Green {
+  filter: hue-rotate(90deg);
+}
+
+.Card-Red {
+  filter: hue-rotate(-45deg);
+}
+
+.Card-Blue {
+  filter: hue-rotate(-180deg);
 }
 
 .ErrorMessage {
@@ -64,52 +77,38 @@
   font-weight: bold;
 }
 
-.bsplitscreen {
+.splitscreen {
   display: flex;
 }
 
-.bsplitscreen .left {
+.splitscreen .aleft {
   flex: 1;
-  position: relative;
   max-width: 50%;
   padding-left: 10%;
 }
-.bsplitscreen .right {
+.splitscreen .aright {
   flex: 1;
-  position: relative;
   max-width: 50%;
   padding-right: 10%;
 }
 
-.splitscreen {
-  /* border: 1px;
-  border-style: solid;
-  border-color: blue; */
-  display: flex;
-  flex-flow: wrap;
-}
-
-/* .outerMost {
-  border: 1px;
-  border-style: solid;
-  border-color: rgb(0, 255, 98);
-  height: max-content;
-} */
-
-.splitscreen .left {
+.splitscreen .bleft {
   flex: 1;
   max-width: 50%;
-  padding: 10%;
+  padding-left: 10%;
+  padding-right: 5%;
 }
-.splitscreen .right {
+.splitscreen .bright {
   flex: 1;
   max-width: 50%;
-  padding: 10%;
+  padding-right: 10%;
+  padding-left: 5%;
 }
 
 input,
 p {
-  font-size: calc(5px + 2vmin);
+  font-size: calc(2vmin);
+  margin-bottom: 10px;
 }
 
 @keyframes App-logo-spin {

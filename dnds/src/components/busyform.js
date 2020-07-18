@@ -27,6 +27,7 @@ class BusyForm extends React.Component {
     this.validateInput = this.validateInput.bind(this);
     this.sortBusyBlocks = this.sortBusyBlocks.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.isItDST = this.isItDST.bind(this);
   }
 
   componentDidMount() {
@@ -264,18 +265,29 @@ class BusyForm extends React.Component {
     this.setState({ busyBlocks: curBusyBlocks });
   }
 
+  isItDST() {
+    const today = new Date();
+    const jan = new Date(today.getFullYear(), 0, 1);
+
+    if (today.getTimezoneOffset() === jan.getTimezoneOffset()) {
+      return false;
+    }
+    return true;
+  }
+
   //function for rendering component
   render() {
     const busyBlockCards = this.state.busyBlocks.map((data, idx) => (
       <div>
-        <div className="Card" key={idx}>
+        <div className="Card Card-Blue" key={idx}>
+          <br></br>
           <label key={idx + "name"}>{data[4]}</label>
           <div className="splitscreen">
-            <div className="left">
+            <div className="bleft">
               <li key={idx + "startDate"}>{data[0]}</li>
               <li key={idx + "start"}>{data[1]}</li>
             </div>
-            <div className="right">
+            <div className="bright">
               <li key={idx + "endDate"}>{data[2]}</li>
               <li key={idx + "stop"}>{data[3]}</li>
             </div>
@@ -299,8 +311,8 @@ class BusyForm extends React.Component {
     return (
       <div className="outerMost">
         {" "}
-        <div className="bsplitscreen">
-          <div className="left">
+        <div className="splitscreen">
+          <div className="aleft">
             <h2>Input Busy Block:</h2>
             <form>
               <label htmlFor="name">Busy Block Name:</label>
@@ -340,7 +352,7 @@ class BusyForm extends React.Component {
                 onChange={this.handleChange}
               />
               <br />
-              <label htmlFor="betime">Busy End Time:</label>
+              <label htmlFor="betime">Busy End Time (Eastern Time):</label>
               <br />
               <input
                 type="time"
@@ -359,8 +371,8 @@ class BusyForm extends React.Component {
             </form>
           </div>
           <br />
-          <div className="right">
-            <h2>Your Busy Blocks (EST):</h2>
+          <div className="aright">
+            <h2>Your Busy Blocks ({this.isItDST() ? "EDT" : "EST"}):</h2>
             <ul>{busyBlockCards}</ul>
           </div>
         </div>
